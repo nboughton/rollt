@@ -7,7 +7,9 @@ import (
 	"github.com/nboughton/go-dice"
 )
 
-// Table represents a table of text options that can be rolled on
+// Table represents a table of text options that can be rolled on. Name and Category
+// are more or less optional by when dealing with large Collections can help make things
+// more manageable.
 type Table struct {
 	Name     string
 	Category string
