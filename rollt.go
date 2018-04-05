@@ -21,7 +21,7 @@ type Item struct {
 }
 
 // Roll rolls on the table and returns the option drawn.
-func (t *Table) Roll() string {
+func (t Table) Roll() string {
 	list := t.weightedList()
 	d, _ := dice.NewDice(fmt.Sprintf("1d%d", len(list)))
 	i, _ := d.Roll()
@@ -29,7 +29,7 @@ func (t *Table) Roll() string {
 	return list[i-1].Text
 }
 
-func (t *Table) weightedList() []Item {
+func (t Table) weightedList() []Item {
 	results := []Item{}
 	for _, i := range t.Opts {
 		for n := 0; n < i.Weight; n++ {
@@ -41,7 +41,7 @@ func (t *Table) weightedList() []Item {
 }
 
 // Collection represents a group of Tables
-type Collection []*Table
+type Collection []Table
 
 // Names returns the assigned table names of all tables in a collection
 func (c Collection) Names() (list []string) {
