@@ -3,7 +3,12 @@ package rollt
 
 import (
 	"math/rand"
+	"time"
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 // Table represents a table of text options that can be rolled on. Name and Category
 // are more or less optional by when dealing with large Collections can help make things
