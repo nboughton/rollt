@@ -19,7 +19,8 @@ type Table struct {
 	Opts     []Item
 }
 
-// Item represents the text and weighting (if any) of a listed item
+// Item represents the text and weighting (if any) of a listed item. Items must have a Weight
+// of at least 1 to be included in a Roll
 type Item struct {
 	Weight int
 	Text   string
