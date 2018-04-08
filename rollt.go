@@ -2,9 +2,7 @@
 package rollt
 
 import (
-	"fmt"
-
-	"github.com/nboughton/go-dice"
+	"math/rand"
 )
 
 // Table represents a table of text options that can be rolled on. Name and Category
@@ -25,10 +23,8 @@ type Item struct {
 // Roll rolls on the table and returns the option drawn.
 func (t Table) Roll() string {
 	list := t.weightedList()
-	d, _ := dice.NewDice(fmt.Sprintf("1d%d", len(list)))
-	i, _ := d.Roll()
 
-	return list[i-1].Text
+	return list[rand.Intn(len(list))].Text
 }
 
 func (t Table) weightedList() []Item {
@@ -45,10 +41,19 @@ func (t Table) weightedList() []Item {
 // Collection represents a group of Tables
 type Collection []Table
 
-// Names returns the assigned table names of all tables in a collection
+// Names returns table Names from the Collection
 func (c Collection) Names() (list []string) {
 	for _, t := range c {
 		list = append(list, t.Name)
+	}
+
+	return
+}
+
+// Categories returns all Category names from the Collection
+func (c Collection) Categories() (list []string) {
+	for _, t := range c {
+		list = append(list, t.Category)
 	}
 
 	return
