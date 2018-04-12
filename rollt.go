@@ -2,8 +2,15 @@
 package rollt
 
 import (
+	"math/rand"
+	"time"
+
 	"github.com/nboughton/go-dice"
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 // Table represents a table of text options that can be rolled on. Name and Category
 // are more or less optional by when dealing with large Collections can help make things
@@ -13,6 +20,14 @@ type Table struct {
 	Category string
 	Dice     string
 	Items    []Item
+}
+
+// List represents a List of strings from which something can be selected at random
+type List []string
+
+// Roll returns a random string from List
+func (l List) Roll() string {
+	return l[rand.Intn(len(l))]
 }
 
 // Item represents the text and matching numbers from the table
