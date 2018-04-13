@@ -3,6 +3,7 @@ package rollt
 
 import (
 	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/nboughton/go-dice"
@@ -28,6 +29,10 @@ type List []string
 // Roll returns a random string from List
 func (l List) Roll() string {
 	return l[rand.Intn(len(l))]
+}
+
+func (l List) String() string {
+	return strings.Join(l, ", ")
 }
 
 // Item represents the text and matching numbers from the table
