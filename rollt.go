@@ -2,8 +2,12 @@
 package rollt
 
 import (
+	"bytes"
+	"fmt"
 	"math/rand"
+	"strconv"
 	"strings"
+	"text/tabwriter"
 	"time"
 
 	"github.com/nboughton/go-dice"
@@ -21,6 +25,30 @@ type Table struct {
 	Category string
 	Dice     string
 	Items    []Item
+}
+
+func (t Table) String() string {
+	var (
+		buf = new(bytes.Buffer)
+		tw  = tabwriter.NewWriter(buf, 2, 2, 1, ' ', 0)
+	)
+
+	fmt.Fprintln(tw, "Dice\t|\tText")
+	for _, i := range t.Items {
+		fmt.Fprintf(tw, "%s\t|\t%s\n", matchToStr(i.Match), i.Text)
+	}
+	tw.Flush()
+
+	return buf.String()
+}
+
+func matchToStr(m []int) string {
+	var s []string
+	for _, n := range m {
+		s = append(s, strconv.Itoa(n))
+	}
+
+	return strings.Join(s, ", ")
 }
 
 // List represents a List of strings from which something can be selected at random
