@@ -17,9 +17,10 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-// Table represents a table of text options that can be rolled on. Name and Category
-// are more or less optional by when dealing with large Collections can help make things
-// more manageable.
+// Table represents a table of text options that can be rolled on. Name is
+// optional. Tables are preferable to Lists when using multiple dice to achieve
+// a result (i.e 2d6) because their results fall on a bell curve whereas single-die
+// rolls have an even probability.
 type Table struct {
 	Name  string
 	Dice  string
@@ -32,7 +33,7 @@ type Item struct {
 	Text  string
 }
 
-// Roll rolls on the table and returns the option drawn.
+// Roll on the table and return the option drawn.
 func (t Table) Roll() string {
 	d, err := dice.NewDice(t.Dice)
 	if err != nil {
