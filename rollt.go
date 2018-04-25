@@ -21,46 +21,9 @@ func init() {
 // are more or less optional by when dealing with large Collections can help make things
 // more manageable.
 type Table struct {
-	Name     string
-	Category string
-	Dice     string
-	Items    []Item
-}
-
-func (t Table) String() string {
-	var (
-		buf = new(bytes.Buffer)
-		tw  = tabwriter.NewWriter(buf, 2, 2, 1, ' ', 0)
-	)
-
-	fmt.Fprintln(tw, "Dice\t|\tText")
-	for _, i := range t.Items {
-		fmt.Fprintf(tw, "%s\t|\t%s\n", matchToStr(i.Match), i.Text)
-	}
-	tw.Flush()
-
-	return buf.String()
-}
-
-func matchToStr(m []int) string {
-	var s []string
-	for _, n := range m {
-		s = append(s, strconv.Itoa(n))
-	}
-
-	return strings.Join(s, ", ")
-}
-
-// List represents a List of strings from which something can be selected at random
-type List []string
-
-// Roll returns a random string from List
-func (l List) Roll() string {
-	return l[rand.Intn(len(l))]
-}
-
-func (l List) String() string {
-	return strings.Join(l, ", ")
+	Name  string
+	Dice  string
+	Items []Item
 }
 
 // Item represents the text and matching numbers from the table
@@ -89,23 +52,41 @@ func (t Table) Roll() string {
 	return ""
 }
 
-// Collection represents a group of Tables
-type Collection []Table
+func (t Table) String() string {
+	var (
+		buf = new(bytes.Buffer)
+		tw  = tabwriter.NewWriter(buf, 2, 2, 1, ' ', 0)
+	)
 
-// Names returns table Names from the Collection
-func (c Collection) Names() (list []string) {
-	for _, t := range c {
-		list = append(list, t.Name)
+	fmt.Fprintln(tw, "Dice\t|\tText")
+	for _, i := range t.Items {
+		fmt.Fprintf(tw, "%s\t|\t%s\n", matchToStr(i.Match), i.Text)
 	}
+	tw.Flush()
 
-	return
+	return buf.String()
 }
 
-// Categories returns all Category names from the Collection
-func (c Collection) Categories() (list []string) {
-	for _, t := range c {
-		list = append(list, t.Category)
+func matchToStr(m []int) string {
+	var s []string
+	for _, n := range m {
+		s = append(s, strconv.Itoa(n))
 	}
 
-	return
+	return strings.Join(s, ", ")
+}
+
+// List represents a List of strings from which something can be selected at random
+type List struct {
+	Name  string
+	Items []string
+}
+
+// Roll returns a random string from List
+func (l List) Roll() string {
+	return l.Items[rand.Intn(len(l.Items))]
+}
+
+func (l List) String() string {
+	return strings.Join(l.Items, ", ")
 }
