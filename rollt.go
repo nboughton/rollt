@@ -85,7 +85,11 @@ type List struct {
 
 // Roll returns a random string from List
 func (l List) Roll() string {
-	return l.Items[rand.Intn(len(l.Items))]
+	if len(l.Items) > 0 {
+		return l.Items[rand.Intn(len(l.Items))]
+	}
+
+	return ""
 }
 
 func (l List) String() string {
