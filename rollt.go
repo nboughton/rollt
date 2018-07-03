@@ -5,12 +5,12 @@ import (
 	"bytes"
 	"fmt"
 	"math/rand"
-	"strconv"
 	"strings"
 	"text/tabwriter"
 	"time"
 
 	"github.com/nboughton/go-dice"
+	"github.com/nboughton/num"
 )
 
 func init() {
@@ -22,14 +22,23 @@ func init() {
 // a result (i.e 2d6) because their results fall on a bell curve whereas single-die
 // rolls have an even probability.
 type Table struct {
-	Name  string
+	ID        string // Shorthand ID for finding subtables
+	Name      string
+	Dice      string
+	Reroll    Reroll
+	Items     []Item
+	SubTables []Table
+}
+
+// Reroll describes conditions under which the table should be rolled on again, using a different dice value
+type Reroll struct {
+	Match num.Set
 	Dice  string
-	Items []Item
 }
 
 // Item represents the text and matching numbers from the table
 type Item struct {
-	Match []int
+	Match num.Set
 	Text  string
 }
 
@@ -37,20 +46,39 @@ type Item struct {
 func (t Table) Roll() string {
 	d, err := dice.NewDice(t.Dice)
 	if err != nil {
-		panic(err)
+		return err.Error()
 	}
 
 	n, _ := d.Roll()
 
+	// Check for a reroll
+	if t.Reroll.Match.Contains(num.Int(n)) {
+		d, err = dice.NewDice(t.Reroll.Dice)
+		if err != nil {
+			return err.Error()
+		}
+
+		n, _ = d.Roll()
+	}
+
 	for _, i := range t.Items {
-		for _, m := range i.Match {
-			if m == n {
-				return i.Text
-			}
+		if i.Match.Contains(num.Int(n)) {
+			return i.Text
 		}
 	}
 
 	return ""
+}
+
+// SubTable finds and returns the named subtable
+func (t Table) SubTable(id string) Table {
+	for _, subtable := range t.SubTables {
+		if subtable.ID == id {
+			return subtable
+		}
+	}
+
+	return Table{}
 }
 
 func (t Table) String() string {
@@ -68,10 +96,10 @@ func (t Table) String() string {
 	return buf.String()
 }
 
-func matchToStr(m []int) string {
+func matchToStr(m num.Set) string {
 	var s []string
 	for _, n := range m {
-		s = append(s, strconv.Itoa(n))
+		s = append(s, n.String())
 	}
 
 	return strings.Join(s, ", ")
