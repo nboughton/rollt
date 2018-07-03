@@ -54,6 +54,16 @@ func (m matchSet) contains(n int) bool {
 	return false
 }
 
+func (m matchSet) String() string {
+	var s []string
+
+	for _, n := range m {
+		s = append(s, strconv.Itoa(n))
+	}
+
+	return strings.Join(s, ", ")
+}
+
 // Roll on the table and return the option drawn.
 func (t Table) Roll() string {
 	d, err := dice.NewDice(t.Dice)
@@ -101,20 +111,11 @@ func (t Table) String() string {
 
 	fmt.Fprintln(tw, "Dice\t|\tText")
 	for _, i := range t.Items {
-		fmt.Fprintf(tw, "%s\t|\t%s\n", matchToStr(i.Match), i.Text)
+		fmt.Fprintf(tw, "%s\t|\t%s\n", i.Match, i.Text)
 	}
 	tw.Flush()
 
 	return buf.String()
-}
-
-func matchToStr(m matchSet) string {
-	var s []string
-	for _, n := range m {
-		s = append(s, strconv.Itoa(n))
-	}
-
-	return strings.Join(s, ", ")
 }
 
 // List represents a List of strings from which something can be selected at random
