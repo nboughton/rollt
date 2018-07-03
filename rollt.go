@@ -66,18 +66,18 @@ func (m matchSet) String() string {
 
 // Roll on the table and return the option drawn.
 func (t Table) Roll() string {
-	d, err := dice.NewDice(t.Dice)
+	d, err := dice.NewBag(t.Dice)
 	if err != nil {
-		return err.Error()
+		return "Error: " + err.Error()
 	}
 
 	n, _ := d.Roll()
 
 	// Check for a reroll
 	if t.Reroll.Match.contains(n) {
-		d, err = dice.NewDice(t.Reroll.Dice)
+		d, err = dice.NewBag(t.Reroll.Dice)
 		if err != nil {
-			return err.Error()
+			return "Error: " + err.Error()
 		}
 
 		n, _ = d.Roll()
