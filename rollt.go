@@ -5,12 +5,12 @@ import (
 	"bytes"
 	"fmt"
 	"math/rand"
+	"strconv"
 	"strings"
 	"text/tabwriter"
 	"time"
 
 	"github.com/nboughton/go-dice"
-	"github.com/nboughton/num"
 )
 
 func init() {
@@ -32,14 +32,26 @@ type Table struct {
 
 // Reroll describes conditions under which the table should be rolled on again, using a different dice value
 type Reroll struct {
-	Match num.Set
+	Match matchSet
 	Dice  string
 }
 
 // Item represents the text and matching numbers from the table
 type Item struct {
-	Match num.Set
+	Match matchSet
 	Text  string
+}
+
+type matchSet []int
+
+func (m matchSet) contains(n int) bool {
+	for _, i := range m {
+		if i == n {
+			return true
+		}
+	}
+
+	return false
 }
 
 // Roll on the table and return the option drawn.
@@ -52,7 +64,7 @@ func (t Table) Roll() string {
 	n, _ := d.Roll()
 
 	// Check for a reroll
-	if t.Reroll.Match.Contains(num.Int(n)) {
+	if t.Reroll.Match.contains(n) {
 		d, err = dice.NewDice(t.Reroll.Dice)
 		if err != nil {
 			return err.Error()
@@ -62,7 +74,7 @@ func (t Table) Roll() string {
 	}
 
 	for _, i := range t.Items {
-		if i.Match.Contains(num.Int(n)) {
+		if i.Match.contains(n) {
 			return i.Text
 		}
 	}
@@ -96,10 +108,10 @@ func (t Table) String() string {
 	return buf.String()
 }
 
-func matchToStr(m num.Set) string {
+func matchToStr(m matchSet) string {
 	var s []string
 	for _, n := range m {
-		s = append(s, n.String())
+		s = append(s, strconv.Itoa(n))
 	}
 
 	return strings.Join(s, ", ")
