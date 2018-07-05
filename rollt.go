@@ -178,6 +178,11 @@ func (t Table) Roll() string {
 		}
 
 		n, _ = d.Roll()
+		for _, i := range t.Items {
+			if i.Match.contains(n) {
+				out += "; " + i.Text
+			}
+		}
 	}
 
 	// Append text for final roll result
