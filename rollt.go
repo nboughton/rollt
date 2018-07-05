@@ -213,6 +213,11 @@ func (t Table) String() string {
 	return buf.String()
 }
 
+// Label returns the table Name
+func (t Table) Label() string {
+	return t.Name
+}
+
 // List represents a List of strings from which something can be selected at random
 type List struct {
 	Name  string
@@ -230,4 +235,9 @@ func (l List) Roll() string {
 
 func (l List) String() string {
 	return strings.Join(l.Items, ", ")
+}
+
+// Label returns the list Name
+func (l List) Label() string {
+	return l.Name
 }
