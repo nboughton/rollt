@@ -116,7 +116,6 @@ type Table struct {
 	Dice   string
 	Reroll Reroll
 	Items  []Item
-	//SubTables []Table
 }
 
 // Reroll describes conditions under which the table should be rolled on again, using a different dice value
@@ -129,12 +128,8 @@ type Reroll struct {
 type Item struct {
 	Match  matchSet
 	Text   string
-	Action ItemAction
+	Action func() string
 }
-
-// ItemAction allows for custom functions to be applied to rolls
-// This should facilitate extra rolls where required.
-type ItemAction func() string
 
 type matchSet []int
 
@@ -189,19 +184,6 @@ func (t Table) Roll() string {
 
 	return ""
 }
-
-/*
-// SubTable finds and returns the named subtable
-func (t Table) SubTable(id string) Table {
-	for _, subtable := range t.SubTables {
-		if subtable.ID == id {
-			return subtable
-		}
-	}
-
-	return Table{}
-}
-*/
 
 func (t Table) String() string {
 	var (
