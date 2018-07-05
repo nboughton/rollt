@@ -25,7 +25,8 @@ type Able interface {
 }
 
 // Registry allows multiple tables to be registered and called as
-// item actions from other tables.
+// item actions from other tables. It's particularly useful when
+// an item.Action needs to refer to its parent table.
 /* For Example:
 
     var r = rollt.NewRegistry()
@@ -40,7 +41,7 @@ type Able interface {
 	    },
 	    Items: []rollt.Item{
 		    {Match: []int{1}, Text: "Item 1", Action: func() string {
-			    tbl, _ := r.Get(t1.ID)
+			    tbl, _ := r.Get("Parent")
 			    return tbl.Roll()
 		    }},
 		    {Match: []int{2}, Text: "Item 2"},
