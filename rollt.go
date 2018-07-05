@@ -17,17 +17,101 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
+// Registry allows multiple tables to be registered and called as
+// item actions from other tables.
+/* For Example:
+    var r = rollt.NewRegistry()
+
+    var t = rollt.Table{
+	    Name: "Test",
+	    ID:   "Parent",
+	    Dice: "1d6",
+	    Reroll: rollt.Reroll{
+		    Match: []int{5, 6},
+		    Dice:  "1d4",
+	    },
+	    Items: []rollt.Item{
+		    {Match: []int{1}, Text: "Item 1", Action: func() string { return r[t1.ID].Roll() + " " + r[t1.ID].Roll() }},) string { return r[t1.ID].Roll() + " " + r[t1.ID].Roll() }},
+		    {Match: []int{2}, Text: "Item 2"},
+		    {Match: []int{3}, Text: "Item 3"},
+		    {Match: []int{4}, Text: "Item 4"},
+		    {Match: []int{5}, Text: "Item 5"},
+		    {Match: []int{6}, Text: "Item 6"},
+	    },
+    }
+
+    var t1 = rollt.Table{
+	    Name: "Subtable 1",
+	    ID:   "Child 1",
+	    Dice: "1d6",
+	    Items: []rollt.Item{
+		    {Match: []int{1}, Text: "Item 1.1"},
+		    {Match: []int{2}, Text: "Item 2.1"},
+		    {Match: []int{3}, Text: "Item 3.1"},
+		    {Match: []int{4}, Text: "Item 4.1"},
+		    {Match: []int{5}, Text: "Item 5.1"},
+		    {Match: []int{6}, Text: "Item 6.1"},
+	    },
+    }
+
+    func main() {
+	    r.Add(t)
+	    r.Add(t1)
+
+	    fmt.Printf("%+v\n", t.Items)
+	    for i := 0; i < 10; i++ {
+		    fmt.Println(t.Roll())
+	    }
+    }
+*/
+type Registry map[string]Table
+
+// NewRegistry returns a new registry
+func NewRegistry() Registry {
+	return make(Registry)
+}
+
+// Add a table to the Registry
+func (r Registry) Add(t Table) error {
+	if _, ok := r[t.ID]; !ok {
+		r[t.ID] = t
+		return nil
+	}
+
+	return fmt.Errorf("table %s already registered", t.ID)
+}
+
+// Remove a table from the Registry
+func (r Registry) Remove(id string) error {
+	if _, ok := r[id]; ok {
+		delete(r, id)
+		return nil
+	}
+
+	return fmt.Errorf("table %s is not registered", id)
+}
+
+// Get a table from the registry
+func (r Registry) Get(id string) (Table, error) {
+	t, ok := r[id]
+	if !ok {
+		return Table{}, fmt.Errorf("no table registered with id [%s]", id)
+	}
+
+	return t, nil
+}
+
 // Table represents a table of text options that can be rolled on. Name is
 // optional. Tables are preferable to Lists when using multiple dice to achieve
 // a result (i.e 2d6) because their results fall on a bell curve whereas single-die
 // rolls have an even probability.
 type Table struct {
-	ID        string // Shorthand ID for finding subtables
-	Name      string
-	Dice      string
-	Reroll    Reroll
-	Items     []Item
-	SubTables []Table
+	ID     string // Shorthand ID for finding subtables
+	Name   string
+	Dice   string
+	Reroll Reroll
+	Items  []Item
+	//SubTables []Table
 }
 
 // Reroll describes conditions under which the table should be rolled on again, using a different dice value
@@ -45,7 +129,7 @@ type Item struct {
 
 // ItemAction allows for custom functions to be applied to rolls
 // This should facilitate extra rolls where required.
-type ItemAction func(...string) string
+type ItemAction func() string
 
 type matchSet []int
 
@@ -90,13 +174,18 @@ func (t Table) Roll() string {
 
 	for _, i := range t.Items {
 		if i.Match.contains(n) {
-			return i.Text
+			out := i.Text
+			if i.Action != nil {
+				out += "; " + i.Action()
+			}
+			return out
 		}
 	}
 
 	return ""
 }
 
+/*
 // SubTable finds and returns the named subtable
 func (t Table) SubTable(id string) Table {
 	for _, subtable := range t.SubTables {
@@ -107,6 +196,7 @@ func (t Table) SubTable(id string) Table {
 
 	return Table{}
 }
+*/
 
 func (t Table) String() string {
 	var (
