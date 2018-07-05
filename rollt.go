@@ -17,6 +17,13 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
+// Able interface is used to define all rollt.Ables that can be rolled or printed.
+type Able interface {
+	Label() string
+	Roll() string
+	String() string
+}
+
 // Registry allows multiple tables to be registered and called as
 // item actions from other tables.
 /* For Example:
