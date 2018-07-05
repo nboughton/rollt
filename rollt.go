@@ -155,12 +155,20 @@ func (m matchSet) String() string {
 
 // Roll on the table and return the option drawn.
 func (t Table) Roll() string {
+	out := ""
+
 	d, err := dice.NewBag(t.Dice)
 	if err != nil {
 		return "Error: " + err.Error()
 	}
 
 	n, _ := d.Roll()
+	// Record initial roll result
+	for _, i := range t.Items {
+		if i.Match.contains(n) {
+			out += i.Text
+		}
+	}
 
 	// Check for a reroll
 	if t.Reroll.Match.contains(n) {
@@ -172,9 +180,9 @@ func (t Table) Roll() string {
 		n, _ = d.Roll()
 	}
 
+	// Append text for final roll result
 	for _, i := range t.Items {
 		if i.Match.contains(n) {
-			out := i.Text
 			if i.Action != nil {
 				out += "; " + i.Action()
 			}
