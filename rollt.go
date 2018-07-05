@@ -20,6 +20,7 @@ func init() {
 // Registry allows multiple tables to be registered and called as
 // item actions from other tables.
 /* For Example:
+
     var r = rollt.NewRegistry()
 
     var t = rollt.Table{
@@ -31,7 +32,10 @@ func init() {
 		    Dice:  "1d4",
 	    },
 	    Items: []rollt.Item{
-		    {Match: []int{1}, Text: "Item 1", Action: func() string { return r[t1.ID].Roll() + " " + r[t1.ID].Roll() }},) string { return r[t1.ID].Roll() + " " + r[t1.ID].Roll() }},
+		    {Match: []int{1}, Text: "Item 1", Action: func() string {
+			    tbl, _ := r.Get(t1.ID)
+			    return tbl.Roll()
+		    }},
 		    {Match: []int{2}, Text: "Item 2"},
 		    {Match: []int{3}, Text: "Item 3"},
 		    {Match: []int{4}, Text: "Item 4"},
@@ -58,11 +62,12 @@ func init() {
 	    r.Add(t)
 	    r.Add(t1)
 
-	    fmt.Printf("%+v\n", t.Items)
+	    //	fmt.Printf("%+v\n", t.Items)
 	    for i := 0; i < 10; i++ {
 		    fmt.Println(t.Roll())
-	    }
-    }
+    	}
+		}
+
 */
 type Registry map[string]Table
 
