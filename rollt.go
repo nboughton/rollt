@@ -166,7 +166,7 @@ func (t Table) Roll() string {
 	// Record initial roll result
 	for _, i := range t.Items {
 		if i.Match.contains(n) {
-			out += i.Text
+			out = i.Text
 		}
 	}
 
@@ -180,7 +180,10 @@ func (t Table) Roll() string {
 		n, _ = d.Roll()
 		for _, i := range t.Items {
 			if i.Match.contains(n) {
-				out += "; " + i.Text
+				if out != "" {
+					out += "; "
+				}
+				out += i.Text
 			}
 		}
 	}
@@ -189,7 +192,11 @@ func (t Table) Roll() string {
 	for _, i := range t.Items {
 		if i.Match.contains(n) {
 			if i.Action != nil {
-				out += "; " + i.Action()
+				if out != "" {
+					out += "; "
+				}
+
+				out += i.Action()
 			}
 			return out
 		}
