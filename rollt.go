@@ -38,9 +38,14 @@ type Reroll struct {
 
 // Item represents the text and matching numbers from the table
 type Item struct {
-	Match matchSet
-	Text  string
+	Match  matchSet
+	Text   string
+	Action ItemAction
 }
+
+// ItemAction allows for custom functions to be applied to rolls
+// This should facilitate extra rolls where required.
+type ItemAction func(...string) string
 
 type matchSet []int
 
